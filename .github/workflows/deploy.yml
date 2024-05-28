@@ -24,5 +24,6 @@ jobs:
 
       - name: Update YAML file
         working-directory: ./desktop
+        shell: bash
         run: |
           sed -i 's/sha512: .*/sha512: ${{ steps.checksum.outputs.new_checksum }}/' dist/release/latest.yml
