@@ -1,0 +1,27 @@
+name: Build/Desktop-Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-checksum:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Calculate new checksum
+        working-directory: ./desktop
+        id: checksum
+        run: |
+          new_checksum=$(openssl dgst -sha512 -binary "dist/release/Shoot Staging Setup 5.0.22.exe" | openssl base64)
+          echo "::set-output name=new_checksum::$new_checksum"
+
+      - name: Update YAML file
+        working-directory: ./desktop
+        run: |
+          sed -i 's/sha512: .*/sha512: ${{ steps.checksum.outputs.new_checksum }}/' dist/release/latest.yml
