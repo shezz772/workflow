@@ -1,29 +1,28 @@
-name: Build/Desktop-Release
+name: Update Checksum
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
 
 jobs:
   update-checksum:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Check out Git repository
+      - name: Check out repository
         uses: actions/checkout@v4
 
       - name: Calculate new checksum
-        working-directory: ./desktop
-        id: checksum
-        shell: bash
+        id: calc-checksum
         run: |
           new_checksum=$(openssl dgst -sha512 -binary "dist/release/Shoot Staging Setup 5.0.22.exe" | openssl base64)
-          echo "::set-output name=new_checksum::$new_checksum"
+          echo "new_checksum=$new_checksum" >> $GITHUB_ENV
 
-      - name: Update YAML file
-        working-directory: ./desktop
-        shell: bash
+      - name: Update checksum in YAML file
         run: |
-          sed -i 's/sha512: .*/sha512: ${{ steps.checksum.outputs.new_checksum }}/' dist/release/latest.yml
+          sed -i "s#^\(\s*sha512:\s*\).*\$#\1${{ env.new_checksum }}#" latest.yml
+
+      - name: Output the new checksum
+        run: |
+          echo "New checksum is ${{ env.new_checksum }}"
