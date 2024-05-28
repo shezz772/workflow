@@ -25,6 +25,11 @@ jobs:
         run: |
           sed -i "s#^\(\s*sha512:\s*\).*\$#\1${{ env.new_checksum }}#" dist/release/latest.yml
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: latest.yml
+          path: desktop/dist/release/latest.yml
+
       - name: Output the new checksum
         working-directory: ./desktop
         run: |
