@@ -16,6 +16,7 @@ jobs:
       - name: Calculate new checksum
         working-directory: ./desktop
         id: calc-checksum
+        shell: bash
         run: |
           new_checksum=$(openssl dgst -sha512 -binary "dist/release/Shoot Staging Setup 5.0.22.exe" | openssl base64 | awk '{printf "%s", $0}')
           echo "new_checksum=$new_checksum" >> $GITHUB_ENV
