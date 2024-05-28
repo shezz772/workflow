@@ -23,6 +23,7 @@ jobs:
 
       - name: Update checksum in YAML file
         working-directory: ./desktop
+        shell: bash
         run: |
           sed -i "s#^\(\s*sha512:\s*\).*\$#\1${{ env.new_checksum }}#" dist/release/latest.yml
 
